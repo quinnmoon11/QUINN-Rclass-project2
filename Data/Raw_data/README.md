@@ -2,7 +2,6 @@
 
 This folder contains the raw data for this project. We begin with the data provided with the Palmerpenguins R package, which you can install in R using `install.packages("palmerpenguins")`
 
-Generally, any dataset should contain some meta-data explaining what each variable in the dataset is, or a **Data Dictionary**. 
 
 This dataset contains 17 columns, 16 data columns and one comment field, as explained in `datadictionary.csv` or the table below. 
 
@@ -10,11 +9,9 @@ Raw data sets should **generally not be edited by hand**. It should instead be l
 
 Not all of these columns are interesting for analysis (e.g., `studyName`) and you may want to drop them in your processed data. 
 
-As the raw data that comes with the package `penguins_raw` are pretty clean, I purposely prepared a dirtier version for you to work on that will provide a more realistic data analysis pipeline experience.
+`penguins_raw_dirty.csv` contains some random data entry errors that need to be cleaned. 
 
-`penguins_raw_dirty.csv` contains some random data entry errors that need to be cleaned. If you want to see how this was created, check out `Project_template/Code/Processing_code/typos.R`
-
-Your first task is to find the faulty values and clean them using the techinques weʻve been learning in class, and save the cleaned dataset in `../Processed_data/`. Please save both `.rda` and `.csv` versions, and include a data dictionary in the `README.md`.  
+Your first task is to find the faulty values and clean them, and save the cleaned dataset in `../Processed_data/`. Please save both `.rda` and `.csv` versions, and include a data dictionary in the `README.md`.  
 
 The code for processing the raw data should be in **Project_template > Code > Processing_code**, and should run from that working directory.  Please use **relative paths** from that working directory to load and save files. 
 
