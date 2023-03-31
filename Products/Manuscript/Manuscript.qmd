@@ -1,0 +1,177 @@
+---
+title: "Example Manuscript Template for a Data Analysis Project"
+subtitle: ""
+author: Marguerite Butler
+date: "`r Sys.Date()`"
+format:
+  docx:
+    toc: false
+    number-sections: true
+    highlight-style: github 
+bibliography: ../references.bib
+csl: ../evolution.csl
+---
+
+# Project Instructions
+
+_The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. You don't need to have exactly these sections, but the content covering those sections should be addressed._
+
+_This uses MS Word as output format as specified in the YAML header. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats._
+
+
+_For Project 2, it is fine to have very brief sections, just to practice the structure of the manuscript and get a feel for how you would set it up. The data cleaning should have been documented carefully in Project 1. Project 2 should focus on reporting the analysis, so you might have a few sentences for the data and results sections, and maybe just a sentence for the other sections like the intro, etc._ 
+
+_For Project 3 on your own data, I hope youʻll write a few more words, if it helps you think through your research project._ 
+
+
+_Note on strategy: _Whereas in the `exploratory_analysis.qmd` we read in __code chunks__ to produce the figures and tables de novo, here we will read in the saved figures and tables. This is because in order to use code chunks, you generally have to run the whole script. This is good to do in the first case, where you are going through all of the steps but with more commentary. But here, were we are writing up the final manuscript, we will only include the best finished products and it can be cumbersome to rerun the entire analysis every time you want to see what the paper looks after each edit. It is more efficient to just read in __graphics files__ (.pdf, .png, .jpg, etc.) for the figures and __.rds__ files for the tables, both from the Results directory._ 
+
+# Summary/Abstract
+_Write a summary of your project._
+
+
+{{< pagebreak >}}
+
+
+# Introduction 
+
+## General Background Information
+_Provide enough background on your topic that others can understand the why and how of your analysis_ 
+
+## Description of data and data source
+_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+
+_To cite other work (usually done in the introduction, methods, and discussion), make sure your references are in the bibtex file specified in the YAML header above (here `references.bib`) and have the right bibtex key. Then you can include like below. Remember that enclosing the reference key in [ ] will make a parenthetical citation:_
+
+Here we describe an analysis of the Palmer Penguins dataset [@Horst:2020], which contains data on three species of penguins from the Palmer Archipelago, Antarctica. Data were collected and made available by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER, a member of the Long Term Ecological Research Network [@Gorman:2014].
+
+## Questions/Hypotheses to be addressed
+_State the research questions you plan to answer with this analysis. To get you started:_
+
+Our research questions are:
+
+1. Are the species different in size? 
+
+{{< pagebreak >}}
+
+
+# Methods 
+
+_Describe your methods. Breifly describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement (which could be a copy of your code or your .qmd)._
+
+
+## Data acquisition
+_As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
+
+
+## Data import and cleaning
+_Code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. in the supplement). All materials, including files that contain code, should be commented well so everyone can follow along._
+
+_For project 2, you will want to write a brief description of your cleaning and processing steps and include a reference (link to) to your cleaning script or quarto document (or both)._ 
+
+## Statistical analysis
+_Explain anything related to your statistical analyses._
+
+
+{{< pagebreak >}}
+
+
+# Results
+
+## Exploratory/Descriptive analysis
+
+_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
+
+
+@tbl-summary_table shows a summary of the data.
+
+_Note the data is loaded using a **relative** path indicated by the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\user\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path._ 
+
+```{r , results="asis"}
+#| label: tbl-summary_table
+#| tbl-cap: "Data summary table."
+#| echo: FALSE
+options(knitr.kable.NA = "")  # supresses printing of NAs
+resulttable=readRDS("../../Results/summary_table.rds")
+knitr::kable(resulttable, digits=2)
+```
+
+## Size
+
+_As an example, here is an analysis of size by species and island.  You may leave this if you wish, but do edit it to make it your own._
+
+We found that Gentoo penguins are substantially larger than both Adelie and Chinstrap penguins, which are similar in size
+(@fig-mass_species_bars, ANOVA P-value < 0.001 ).
+
+```{r}
+#| label: fig-mass_species_bars
+#| fig-cap: "Body mass distributions of the three species of penguin."
+#| echo: FALSE
+knitr::include_graphics("../../Results/mass_species_bars.png")
+```
+
+```{r , results="asis"}
+#| label: tbl-mass_species_anova
+#| tbl-cap: "Size differences between species."
+#| echo: FALSE
+options(knitr.kable.NA = "")
+resulttable=readRDS("../../Results/mass_species_anova.rds")
+knitr::kable(resulttable, digits=2)
+```
+
+There does not seem to be any intrinsic island effect. Differences in mass across islands are related to the species which happen to reside on each island (@fig-mass_species_island_density, @tbl-mass_species_island_anova).
+
+```{r}
+#| label: fig-mass_species_island_density
+#| fig-cap: "Body mass distributions of the three species of penguin."
+#| echo: FALSE
+knitr::include_graphics("../../Results/mass_species_island_density.png")
+```
+
+```{r , results="asis"}
+#| label: tbl-mass_species_island_anova
+#| tbl-cap: "Size differences between species by island."
+#| echo: FALSE
+options(knitr.kable.NA = "")
+resulttable=readRDS("../../Results/mass_species_island_anova.rds")
+knitr::kable(resulttable, digits=2)
+```
+
+
+
+## Further analyses (use subheaders as you wish)
+
+_Develop and explore three additional questions by any combination of figures and statistical or modeling methods to analyze your data and to produce meaningful figures, tables, etc. Make it look like a draft scientific paper or project report, appropriate for your career goals._
+
+_(Reminder: it is now common practice to provide code that fully reproduces the analysis with any publication. This would be your analysis scripts or .qmd, and is provided with supplementary information.  Here we are writing a nice document that could be a manuscript, so we want the full analysis code to produce figures and data ready for display as tables, which are loaded here.)_
+
+
+{{< pagebreak >}}
+
+
+# Discussion
+
+## Summary and Interpretation
+_Summarize what you did, what you found and what it means._
+
+## Strengths and Limitations
+_Discuss what you perceive as strengths and limitations of your analysis._
+
+## Conclusions
+_What are the main take-home messages?_
+
+_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
+
+This paper [@Leek:2015] discusses types of analyses. 
+
+These papers [@McKay:2020; @McKay:2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
+
+Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
+
+
+{{< pagebreak >}}
+
+# References
+
+
+

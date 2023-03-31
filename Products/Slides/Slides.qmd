@@ -1,0 +1,49 @@
+---
+title: Example Quarto slides
+author: Andreas Handel modified by Marguerite Butler
+format: revealjs
+bibliography: ../references.bib
+csl: ../evolution.csl
+---
+
+## Overview
+
+-   A few simple slides using the [`revealjs` (html) format](https://quarto.org/docs/presentations/revealjs/).
+-   For other formats (e.g. Powerpoint, or Beamer/pdf), see [here](https://quarto.org/docs/guide/).
+
+## Example slide
+
+This shows the summary table. 
+
+```{r}
+#| label: tbl-summary_table
+#| tbl-cap: "Data summary table."
+#| echo: FALSE
+options(knitr.kable.NA = "")  # supresses printing of NAs
+resulttable=readRDS("../../Results/summary_table.rds")
+knitr::kable(resulttable, digits=2)
+```
+
+## Example slide
+
+This shows a figure created by the analysis script. It is inserted using Markdown (not knitr code, but that would be possible too).
+
+![](../../Results/mass_species_island_density.png){fig-align="center" width="420"}
+
+## Example slide
+
+This shows the model fitting results as table.
+
+```{r}
+#| label: tbl-resulttable2
+#| tbl-cap: "Linear model fit table."
+#| echo: FALSE
+resulttable2 = readRDS("../../Results/mass_species_island_anova.rds")
+knitr::kable(resulttable2)
+```
+
+## Example slide with reference
+
+The data are from the Palmer Penguins R package [@Horst:2020;@Gorman:2014].
+
+## References
