@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Marguerite Butler">
-<meta name="dcterms.date" content="2023-03-21">
+<meta name="author" content="Quinn Moon">
+<meta name="dcterms.date" content="2023-03-31">
 
-<title>An example draft analysis script</title>
+<title>Analysis script</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -110,7 +110,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">An example draft analysis script</h1>
+<h1 class="title">Analysis script</h1>
 </div>
 
 
@@ -120,14 +120,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Marguerite Butler </p>
+             <p>Quinn Moon </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 21, 2023</p>
+      <p class="date">March 31, 2023</p>
     </div>
   </div>
   
@@ -137,24 +137,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This Quarto file loads the cleaned Palmer Penguins data and does some initial analysis. I find this step very helpful for seeing what results you have to work with for your talk or paper/final report.</p>
-<p>Some of what is written below is for you. I would like you to modify this quarto file to produce a document customized for your analysis and written to explain your thinking in your data analysis so feel free to modify as much as you wish.</p>
-<p>It is worth taking a minute to reflect on where we are in the data analysis workflow. The purpose of the previous processing document was to document data cleaning and processing in preparation for analysis. You saw that as part of the cleaning and processing step, we already had to explore the data somewhat to understand how to clean it. In general, as you explore, you find more things that need cleaning. As you clean, you find more to explore.</p>
-<section id="the-need-to-document-your-workflow" class="level1">
-<h1>The need to document your workflow</h1>
-<p>Although we broke our workflow in this project into cleaning and analysis steps, depending on your project, it may be more logical to divide the scripts in other ways. The organization should naturally reflect the workflow.</p>
-<p>In rather clean datasets at times it might make more sense to combine the cleaning and exploring code parts into a single R or Quarto file. <em>But if you do have real errors to fix, you will want to carefully document cleaning steps</em>, and probably not redo the cleaning each time you want to get a bit further on your data exploration and analysis. Itʻs a lot of baggage to carry around and also errors might creep in if you are keeping code in your script that you are not actively working on.</p>
-<p>When there are natural breaks in the workflow (i.e., when you close the door on cleaning or on a first analysis), it can be a good idea to have start a new script because once you clean your data, you will have a new starting point for all of your downstream analyses (and not look back at the really raw data, unless you want to change your mind about some of the cleaning - thus the need for keeping an original raw data file and documenting all the steps).</p>
-<p>This can also come up when you have a multi-stage analysis. In very complex analyses, it can make a lot of sense to have separate scripts for major analyses or workflow steps. As always, use your jugement, and be intentional about your organization. Clean organization = clear thinking.</p>
-</section>
-<section id="analysis" class="level1">
-<h1>Analysis</h1>
-<p>If you did a good job in the previous step, you should have a pretty good idea of the structure of the data.</p>
-<p>For this part of the project, develop three questions and use your R skills to answer them. Begin by producing a summary table of the data that could be included in a future paper. You should produce plots or tables and/or statistics or model fits to address your questions.</p>
-</section>
+<p>This Quarto file loads the cleaned Palmer Penguins data and does some initial analysis. The results were created by the <code>statistical_analysis.R</code> script and to the <code>Results</code> folder.</p>
+<p>For this analysis, we want to ask and investigate three seperate questions relating to our penguin data set. This analysis will walk through an exploration of the various relationships between sex, mass, species, and flipper length. I have included some of my thinking as I worked through creating tables and figures.</p>
 <section id="setup" class="level1">
 <h1>Setup</h1>
-<p>This needs to run to load the R script so we can include the code chunks below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">read_chunk</span>(<span class="st">'statistical_analysis.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -164,10 +150,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(ggplot2) <span class="co">#for plotting</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(magrittr) <span class="co">#for piping</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(knitr) <span class="co">#for formatting output</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#path to data and results </span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="st">"../../Data/Processed_data/"</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>results_path <span class="ot">&lt;-</span> <span class="st">"../../Results/"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(dplyr) <span class="co">#for selecting data</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#path to data and results </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="st">"../../Data/Processed_data/"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>results_path <span class="ot">&lt;-</span> <span class="st">"../../Results/"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Load custom functions.</p>
 <div class="cell">
@@ -186,7 +173,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="create-a-summary-table" class="level1">
 <h1>Create a summary table</h1>
-<p>In any paper you should always report a summary of the data. This includes basic statsistics for your data including sample size, counts, and means and standard errors for continuous data.</p>
 <p>Here we will use skimr which produces a summary table, but with more than we want. Letʻs save it as an object so we can grab the elements we want.</p>
 <p>It turns out that the <code>skim()</code> function returns a tibble. We can coerce it to a dataframe and use <code>head()</code> to see what the column names are and what the data look like.</p>
 <div class="cell">
@@ -239,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="select-columns-for-a-final-summary-table" class="level2">
 <h2 class="anchored" data-anchor-id="select-columns-for-a-final-summary-table">Select columns for a final summary table</h2>
 <p>Letʻs retain only the variable, N, mean, sd, and category counts, but letʻs rename them. Since we will use the SD to compute the stadard error letʻs just rename it as SE now and save a step later. (Remember the standard error is just the standard deviation/ square root(sample size)).</p>
-<p>Note: The <code>results="asis"</code> is an option for <code>knitr</code> to layout the the results without the code formatting. Normally output from code chunks has the look of R output. <code>"asis"</code> (as in “as is”, lol) removes that behavior, so we can lay it out as a typeset table for print.</p>
+<p>Note: The <code>results="asis"</code> is an option for <code>knitr</code> to layout the the results without the code formatting. Normally output from code chunks has the look of R output. <code>"asis"</code> removes that behavior, so we can lay it out as a typeset table for print.</p>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select only the variable, N, mean, sd, and category counts</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>sk.table <span class="ot">&lt;-</span> sk[<span class="fu">c</span>(<span class="st">"skim_variable"</span>, <span class="st">"N"</span>, <span class="st">"numeric.mean"</span>, <span class="st">"numeric.sd"</span>, <span class="st">"factor.top_counts"</span>)]</span>
@@ -351,115 +337,179 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(sk.table, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"summary_table.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="do-species-differ-in-size" class="level1">
-<h1>Do species differ in size?</h1>
-<p>As an example, letʻs ask the question <em>Do species differ in size?</em> Our first try is a boxplot of mass by species:</p>
+<section id="do-sexes-differ-in-size" class="level1">
+<h1>Do sexes differ in size?</h1>
+<p>First try a boxplot of mass by sex</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot to screen</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dat, <span class="fu">plot</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Species))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sex_subset <span class="ot">&lt;-</span> <span class="fu">select</span>(dat, <span class="fu">c</span>(<span class="st">'Body Mass (g)'</span>, Sex))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sex_subset2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sex_subset)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plot to screen</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(sex_subset2, <span class="fu">plot</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Sex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="exploratory_analysis_files/figure-html/mass_species_boxplot-1.png" class="img-fluid" width="672"></p>
+<p><img src="exploratory_analysis_files/figure-html/mass_sex_boxplot-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot to .png file, can also do pdf using `pdf()` function </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_bars.png"</span>, results_path))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(dat, <span class="fu">plot</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Species))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_sex_bars.png"</span>, results_path))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(sex_subset2, <span class="fu">plot</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Sex))</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>quartz_off_screen 
                 2 </code></pre>
 </div>
 </div>
-<p>The results were created by the <code>statistical_analysis.R</code> script and to the <code>Results</code> folder. Depending on how many tables/figures and workflow steps you have, it might make sense to have subfoldersf. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.</p>
 <p>Now letʻs try a density plot</p>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sex_subset <span class="ot">&lt;-</span> <span class="fu">select</span>(dat, <span class="fu">c</span>(<span class="st">'Body Mass (g)'</span>, Sex))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sex_subset2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sex_subset)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create plot and send to screen</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> sex_subset2 <span class="sc">%&gt;%</span>    <span class="co"># mass density by sex</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="fu">geom_density</span>( <span class="fu">aes</span>(<span class="at">fill=</span>Sex), <span class="at">alpha=</span>.<span class="dv">5</span>) </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="exploratory_analysis_files/figure-html/mass_sex_density-1.png" class="img-fluid" width="672"></p>
 </div>
-<p>Provide a brief diescription of your results. To test the statistical significance of this result we can use ANOVA. We see that species do differ in size and this is a very robust statistical result.</p>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save ggplot objects using `ggsave()` </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_sex_density.png"</span>, results_path), <span class="at">plot=</span>p) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+</div>
+<p>When we plot the results, Males appear to be larger than females. To test the statistical significance of this result we can use ANOVA. We see that sexes do differ in size and this is a very robust statistical result.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model using mass as outcome, species as predictor</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>lm.fit.s <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Species, dat)  </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>anova.table.s <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.s)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print to screen the anova table</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model using mass as outcome, sex as predictor</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># notice that some Sex values are set at NA, we want to only include</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#samples with known sex, create data subset removing NA</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sex_subset <span class="ot">&lt;-</span> <span class="fu">select</span>(dat, <span class="fu">c</span>(<span class="st">'Body Mass (g)'</span>, Sex))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>sex_subset2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sex_subset)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#sex_subset2 #if you want to verify</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>lm.fit.s <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Sex, sex_subset2)  </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>anova.table.s <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.s)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print to screen the anova table</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
 Response: Body Mass (g)
            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
-Species     2 145838050 72919025  339.27 &lt; 2.2e-16 ***
-Residuals 336  72215714   214928                      
+Sex         1  40572797 40572797  76.723 &lt; 2.2e-16 ***
+Residuals 328 173452840   528820                      
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save anova table to file in Results folder  </span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.s, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save anova table to file in Results folder  </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.s, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_sex_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="does-the-island-have-an-affect-on-size" class="level1">
-<h1>Does the island have an affect on size?</h1>
-<p>What about an island effect? Since we know that species differ, we can include a two-way ANOVA and test both factors.</p>
-<p>When we add island to the model <em>after</em> we account for species, it is not significant.</p>
+<section id="does-species-have-an-affect-on-size" class="level1">
+<h1>Does species have an affect on size?</h1>
+<p>Based on our initial screening of the relationship between size and sex, we see that within each sex, the distribution is non-normal. For each Sex distinction, we grouped samples of the same sex but different species together. Perhaps, the underlying assumption of species is contributing to our non normal results.</p>
+<p>What about a species affect? Since we know that sexes differ, we can include a two-way ANOVA and test both factors.</p>
+<p>When we add species to the model <em>after</em> we account for sex, it is highly significant.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model using mass as outcome, species and island as predictors</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>lm.fit.si <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Species <span class="sc">+</span> Island, dat)  </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>anova.table.si <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.si)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.si)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<p>If we add sex <em>first, before</em> species, it is highly signficant! We interpret this as species differing in mass as well.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model using mass as outcome, species and sex as predictors</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>second_subset <span class="ot">&lt;-</span> <span class="fu">select</span>(dat, <span class="fu">c</span>(<span class="st">'Body Mass (g)'</span>, Sex, Species))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>second_subset2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(second_subset)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>lm.fit.si <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Species <span class="sc">+</span> Sex, second_subset2)  </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>anova.table.si <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.si)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.si)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
 Response: Body Mass (g)
-           Df    Sum Sq  Mean Sq  F value Pr(&gt;F)    
-Species     2 145838050 72919025 337.3166 &lt;2e-16 ***
-Island      2     13655     6827   0.0316 0.9689    
-Residuals 334  72202060   216174                    
+           Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+Species     2 144209469 72104735  714.23 &lt; 2.2e-16 ***
+Sex         1  36905104 36905104  365.56 &lt; 2.2e-16 ***
+Residuals 326  32911063   100954                      
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.si, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_island_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.si, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_sex_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>However, if we add island <em>first, before</em> species, it is signficant! We interpret this as islands differing in mass as well, but islands are not as different as species are in mass.</p>
+<p>Letʻs plot both factors together to see whatʻs going on. We see that for each species, males are generally larger and there is some level of sexual dimorphism for all three species. By graphing the data by species, we can also notice that Gentoo is the largest of the three species.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model again, but fit island first then species as predictors</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>lm.fit.is <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Island <span class="sc">+</span> Species, dat)  </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>anova.table.is <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.is)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.si)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Variance Table
-
-Response: Body Mass (g)
-           Df    Sum Sq  Mean Sq  F value Pr(&gt;F)    
-Species     2 145838050 72919025 337.3166 &lt;2e-16 ***
-Island      2     13655     6827   0.0316 0.9689    
-Residuals 334  72202060   216174                    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.si, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_island_species_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Letʻs plot both factors together to see whatʻs going on.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create plot, subseted by species and faceted by island</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span>    <span class="co"># mass density by species</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span>)) <span class="sc">+</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">geom_density</span>( <span class="fu">aes</span>(<span class="at">fill=</span><span class="fu">c</span>(Species)), <span class="at">alpha=</span>.<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">facet_grid</span>(Island <span class="sc">~</span> .)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>second_subset <span class="ot">&lt;-</span> <span class="fu">select</span>(dat, <span class="fu">c</span>(<span class="st">'Body Mass (g)'</span>, Sex, Species))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>second_subset2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(second_subset)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create plot, subseted by species and faceted by species</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> second_subset2 <span class="sc">%&gt;%</span>    <span class="co"># mass density by species</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">geom_density</span>( <span class="fu">aes</span>(<span class="at">fill=</span><span class="fu">c</span>(Sex)), <span class="at">alpha=</span>.<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>       <span class="fu">facet_grid</span>(Species <span class="sc">~</span> .)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="exploratory_analysis_files/figure-html/mass_species_island_density-1.png" class="img-fluid" width="672"></p>
+<p><img src="exploratory_analysis_files/figure-html/mass_species_sex_density-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_island_density.png"</span>, results_path), <span class="at">plot=</span>q) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_species_sex_density.png"</span>, results_path), <span class="at">plot=</span>q) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Saving 7 x 5 in image</code></pre>
 </div>
 </div>
+<p>After some analysis, we see that sex and species both influence mass. But, when mass changes, do other physical measurments, like flipper length also change?</p>
 </section>
-<section id="notes" class="level1">
-<h1>Notes</h1>
-<p>For your own explorations, tables and figures can be “quick and dirty”. As long as you can see what’s going on, there is no need to polish them. That’s in contrast to figures you’ll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.</p>
+<section id="lets-adress-the-question-does-mass-have-an-affect-on-flipper-length" class="level1">
+<h1>Let’s adress the question, does mass have an affect on flipper length?</h1>
+<p>We include a one way ANOVA to test</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How do flipper length and mass relate</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#we can change column name </span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>dat2<span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="st">"Flipper_Length"</span> <span class="ot">=</span> <span class="st">"Flipper Length (mm)"</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>lm.fit.f <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span> <span class="sc">~</span> Flipper_Length, dat2)  </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>anova.table.f <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm.fit.f)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print to screen the anova table</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova.table.f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: Body Mass (g)
+                Df    Sum Sq   Mean Sq F value    Pr(&gt;F)    
+Flipper_Length   1 165443187 165443187  1059.8 &lt; 2.2e-16 ***
+Residuals      337  52610578    156114                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save anova table to file in Results folder  </span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anova.table.f, <span class="at">file =</span> <span class="fu">addpath</span>(<span class="st">"mass_flipper_anova.rds"</span>, results_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From out ANOVA, we can see that the positive relationship between mass and flipper length is highly significant. Let’s graph the relationship for a better look.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create plot and send to screen</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat2, <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">Body Mass (g)</span><span class="st">`</span>, <span class="at">y=</span>Flipper_Length)) <span class="sc">+</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="exploratory_analysis_files/figure-html/mass_flipper_plot-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save ggplot objects using `ggsave()` </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">addpath</span>(<span class="st">"mass_flipper_density.png"</span>, results_path), <span class="at">plot=</span>p) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+</div>
+<p>We can add a linear trend line to better highlight the positive relationship between mass and flipper length that appears to increase relativly linearly.</p>
+</section>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<p>Overall, we see that both species and sex significantly impact mass while mass has a significant influence on flipper length.</p>
+</section>
+<section id="the-end" class="level1">
+<h1>The End</h1>
 </section>
 
 </main>

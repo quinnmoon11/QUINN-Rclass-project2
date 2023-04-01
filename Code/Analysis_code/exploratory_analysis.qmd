@@ -1,37 +1,17 @@
 ---
-title: "An example draft analysis script"
-author: "Marguerite Butler"
-date: "03/21/2023"
+title: "Analysis script"
+author: "Quinn Moon"
+date: "03/31/2023"
 output: html_document
 ---
 
-  
-This Quarto file loads the cleaned Palmer Penguins data and does some initial analysis. I find this step very helpful for seeing what results you have to work with for your talk or paper/final report. 
+This Quarto file loads the cleaned Palmer Penguins data and does some initial analysis.
+The results were created by the `statistical_analysis.R` script and to the `Results` folder.
 
-Some of what is written below is for you. I would like you to modify this quarto file to produce a document customized for your analysis and written to explain your thinking in your data analysis so feel free to modify as much as you wish. 
-
-It is worth taking a minute to reflect on where we are in the data analysis workflow. The purpose of the previous processing document was to document data cleaning and processing in preparation for analysis. You saw that as part of the cleaning and processing step, we already had to explore the data somewhat to understand how to clean it. In general, as you explore, you find more things that need cleaning. As you clean, you find more to explore. 
-
-# The need to document your workflow
-
-Although we broke our workflow in this project into cleaning and analysis steps, depending on your project, it may be more logical to divide the scripts in other ways. The organization should naturally reflect the workflow. 
-
-In rather clean datasets at times it might make more sense to combine the cleaning and exploring code parts into a single R or Quarto file. _But if you do have real errors to fix, you will want to carefully document cleaning steps_, and probably not redo the cleaning each time you want to get a bit further on your data exploration and analysis. Itʻs a lot of baggage to carry around and also errors might creep in if you are keeping code in your script that you are not actively working on. 
-
-When there are natural breaks in the workflow (i.e., when you close the door on cleaning or on a first analysis), it can be a good idea to have start a new script because once you clean your data, you will have a new starting point for all of your downstream analyses (and not look back at the really raw data, unless you want to change your mind about some of the cleaning - thus the need for keeping an original raw data file and documenting all the steps).  
-
-This can also come up when you have a multi-stage analysis. In very complex analyses, it can make a lot of sense to have separate scripts for major analyses or workflow steps. As always, use your jugement, and be intentional about your organization. Clean organization = clear thinking.  
-
-
-# Analysis 
-
-If you did a good job in the previous step, you should have a pretty good idea of the structure of the data. 
-
-For this part of the project, develop three questions and use your R skills to answer them. Begin by producing a summary table of the data that could be included in a future paper. You should produce plots or tables and/or statistics or model fits to address your questions. 
+For this analysis, we want to ask and investigate three seperate questions relating to our penguin data set. This analysis will walk through an exploration of the various relationships between sex, mass, species, and flipper length. I have included some of my thinking as I worked through creating tables and figures. 
 
 # Setup
 
-This needs to run to load the R script so we can include the code chunks below.
 
 ```{r }
 #| cache = FALSE
@@ -57,8 +37,6 @@ Load the data.
 
 # Create a summary table
 
-In any paper you should always report a summary of the data. This includes basic statsistics for your data including sample size, counts, and means and standard errors for continuous data. 
-
 Here we will use skimr which produces a summary table, but with more than we want. Letʻs save it as an object so we can grab the elements we want. 
 
 It turns out that the `skim()` function returns a tibble. We can coerce it to a dataframe and use `head()` to see what the column names are and what the data look like. 
@@ -70,53 +48,68 @@ It turns out that the `skim()` function returns a tibble. We can coerce it to a 
 
 Letʻs retain only the variable, N, mean, sd, and category counts, but letʻs rename them. Since we will use the SD to compute the stadard error letʻs just rename it as SE now and save a step later.  (Remember the standard error is just the standard deviation/ square root(sample size)). 
 
-Note: The `results="asis"` is an option for `knitr` to layout the the results without the code formatting. Normally output from code chunks has the look of R output. `"asis"` (as in "as is", lol) removes that behavior, so we can lay it out as a typeset table for print. 
+Note: The `results="asis"` is an option for `knitr` to layout the the results without the code formatting. Normally output from code chunks has the look of R output. `"asis"` removes that behavior, so we can lay it out as a typeset table for print. 
 
 ```{r summary.table, results="asis"}
 ```
 
 
-# Do species differ in size?
+# Do sexes differ in size?
 
-As an example, letʻs ask the question _Do species differ in size?_ Our first try is a boxplot of mass by species:
+First try a boxplot of mass by sex
 
-```{r mass_species_boxplot}
+```{r mass_sex_boxplot}
 ```
 
-The results were created by the `statistical_analysis.R` script and to the `Results` folder. Depending on how many tables/figures and workflow steps you have, it might make sense to have subfoldersf. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.
 
 Now letʻs try a density plot
 
-```{r mass_species_demsotu}
+```{r mass_sex_density}
 ```
 
-Provide a brief diescription of your results. To test the statistical significance of this result we can use ANOVA. We see that species do differ in size and this is a very robust statistical result. 
+When we plot the results, Males appear to be larger than females. To test the statistical significance of this result we can use ANOVA. We see that sexes do differ in size and this is a very robust statistical result. 
 
-```{r mass_species_aov}
+```{r mass_sex_aov}
 ```
 
-# Does the island have an affect on size?
+# Does species have an affect on size?
 
-What about an island effect? Since we know that species differ, we can include a two-way ANOVA and test both factors. 
+Based on our initial screening of the relationship between size and sex, we see that within each sex, the distribution is non-normal.
+For each Sex distinction, we grouped samples of the same sex but different species together. Perhaps, the underlying assumption of species
+is contributing to our non normal results. 
+
+What about a species affect? Since we know that sexes differ, we can include a two-way ANOVA and test both factors. 
 
 
-When we add island to the model _after_ we account for species, it is not significant. 
+When we add species to the model _after_ we account for sex, it is highly significant. 
 
 ```{r mass_species_island_aov}
 ```
 
-However, if we add island _first, before_ species, it is signficant! We interpret this as islands differing in mass as well, but islands are not as different as species are in mass. 
-
-```{r mass_island_species_aov}
+If we add sex _first, before_ species, it is highly signficant! We interpret this as species differing in mass as well.
+```{r mass_sex_species_aov}
 ```
-Letʻs plot both factors together to see whatʻs going on. 
+Letʻs plot both factors together to see whatʻs going on. We see that for each species, males are generally larger and there is some level of sexual dimorphism for all three species. By graphing the data by species, we can also notice that Gentoo is the largest of the three species.
 
-```{r mass_species_island_density}
+```{r mass_species_sex_density}
 ```
 
+After some analysis, we see that sex and species both influence mass. But, when mass changes, do other physical measurments, like flipper length also change?
 
-# Notes
+# Let's adress the question, does mass have an affect on flipper length?
 
-For your own explorations, tables and figures can be "quick and dirty". As long as you can see what's going on, there is no need to polish them. That's in contrast to figures you'll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.
+We include a one way ANOVA to test
+```{r mass_flipper_aov}
+```
+From out ANOVA, we can see that the positive relationship between mass and flipper length is highly significant.
+Let's graph the relationship for a better look.
 
+```{r mass_flipper_plot}
+```
+We can add a linear trend line to better highlight the positive relationship between mass and flipper length that appears to increase relativly linearly. 
 
+# Discussion
+
+Overall, we see that both species and sex significantly impact mass while mass has a significant influence on flipper length.
+
+# The End
